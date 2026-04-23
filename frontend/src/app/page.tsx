@@ -1,103 +1,94 @@
-import Image from "next/image";
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [lyrics, setLyrics] = useState('');
+  const router = useRouter();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const handleAnalyze = () => {
+    if (!lyrics.trim()) return;
+    localStorage.setItem('songsensei_lyrics', lyrics);
+    router.push('/results');
+  };
+
+  return (
+    <main
+      className="min-h-screen flex flex-col items-center justify-center p-6"
+      style={{ background: 'var(--bg)' }}
+    >
+      <div className="w-full max-w-xl flex flex-col gap-8">
+        {/* Header */}
+        <div className="text-center flex flex-col gap-1.5">
+          <h1 className="text-5xl font-bold tracking-tight" style={{ color: 'var(--espresso)' }}>
+            SongSensei
+          </h1>
+          <p className="text-lg font-light" style={{ color: 'var(--caramel)' }}>
+            曲の先生
+          </p>
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+            Paste Japanese song lyrics to analyze vocabulary and kanji
+          </p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+
+        {/* Textarea */}
+        <div className="flex flex-col gap-2">
+          <textarea
+            value={lyrics}
+            onChange={(e) => setLyrics(e.target.value)}
+            placeholder={'君の笑顔が忘れられなくて\nまた会いたいと思ってる\n\nPaste your lyrics here...'}
+            rows={11}
+            spellCheck={false}
+            className="w-full rounded-2xl p-5 text-base resize-none outline-none transition-all duration-200 leading-relaxed"
+            style={{
+              background: 'var(--card)',
+              border: '1px solid var(--border)',
+              color: 'var(--text)',
+              fontFamily: 'inherit',
+              caretColor: 'var(--caramel)',
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = 'var(--caramel)';
+              e.currentTarget.style.boxShadow = '0 0 0 3px rgba(184,124,76,0.1)';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = 'var(--border)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          <div className="flex justify-end pr-1">
+            <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
+              {lyrics.length > 0 ? `${lyrics.length} characters` : ''}
+            </span>
+          </div>
+        </div>
+
+        {/* Analyze button */}
+        <button
+          onClick={handleAnalyze}
+          disabled={!lyrics.trim()}
+          className="w-full py-4 rounded-2xl font-semibold text-base transition-all duration-200"
+          style={{
+            background: lyrics.trim() ? 'var(--espresso)' : 'var(--border)',
+            color: lyrics.trim() ? '#fdf8f3' : 'var(--text-muted)',
+            cursor: lyrics.trim() ? 'pointer' : 'not-allowed',
+          }}
+          onMouseEnter={(e) => {
+            if (!lyrics.trim()) return;
+            e.currentTarget.style.background = 'var(--espresso-light)';
+            e.currentTarget.style.transform = 'translateY(-1px)';
+            e.currentTarget.style.boxShadow = '0 6px 20px rgba(44,26,14,0.2)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = lyrics.trim() ? 'var(--espresso)' : 'var(--border)';
+            e.currentTarget.style.transform = '';
+            e.currentTarget.style.boxShadow = '';
+          }}
         >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          Analyze Lyrics →
+        </button>
+      </div>
+    </main>
   );
 }
