@@ -19,7 +19,6 @@ class LyricsRequest(BaseModel):
 def analyze_lyrics(req: LyricsRequest):
     kanji_list, vocab_list = findVocabKanji(req.text)
     
-
     return {
         "vocab": getVocabData(vocab_list),
         "kanji": getKanjiData(kanji_list)

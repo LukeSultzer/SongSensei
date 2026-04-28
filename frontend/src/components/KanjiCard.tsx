@@ -9,44 +9,47 @@ interface Props {
 export default function KanjiCard({ entry, showRomaji }: Props) {
   return (
     <div
-      className="flex flex-col items-center gap-2 p-4 rounded-xl text-center transition-colors duration-150"
+      className="flex flex-col p-5 rounded-lg"
       style={{ background: 'var(--card)', border: '1px solid var(--border)' }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = 'var(--border-hover)';
-        e.currentTarget.style.background = 'var(--card-hover)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = 'var(--border)';
-        e.currentTarget.style.background = 'var(--card)';
-      }}
     >
-      <span className="text-4xl font-bold leading-none" style={{ color: 'var(--espresso)' }}>
+      {/* Large kanji */}
+      <p
+        className="text-8xl font-bold text-center leading-none py-4"
+        style={{ color: 'var(--text)' }}
+      >
         {entry.kanji}
-      </span>
-      <p className="text-xs font-medium leading-snug" style={{ color: 'var(--text-secondary)' }}>
+      </p>
+
+      {/* Meaning */}
+      <p
+        className="text-xs text-center mt-2"
+        style={{ color: 'var(--text-secondary)' }}
+      >
         {entry.meaning}
       </p>
+
+      {/* Readings */}
       {showRomaji && (
-        <div className="flex flex-col gap-0.5 w-full">
+        <div className="mt-3 flex flex-col gap-0.5">
           {entry.onyomi.length > 0 && entry.onyomi[0] !== '' && (
             <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-              <span>ON: </span>
-              {entry.onyomi.join('、')}
+              <span className="font-medium" style={{ color: 'var(--text-secondary)' }}>On</span>
+              {'  '}{entry.onyomi.join('、')}
             </p>
           )}
           {entry.kunyomi.length > 0 && (
             <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-              <span>KUN: </span>
-              {entry.kunyomi.join('、')}
+              <span className="font-medium" style={{ color: 'var(--text-secondary)' }}>Kun</span>
+              {'  '}{entry.kunyomi.join('、')}
             </p>
           )}
         </div>
       )}
-      {entry.jlpt && (
-        <div className="mt-auto">
-          <JlptBadge level={entry.jlpt} />
-        </div>
-      )}
+
+      {/* Footer */}
+      <div className="flex items-center justify-end mt-4">
+        <JlptBadge level={entry.jlpt} />
+      </div>
     </div>
   );
 }

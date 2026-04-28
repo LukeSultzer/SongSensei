@@ -1,53 +1,33 @@
 import requests
-from bs4 import BeautifulSoup
 from analyze import isKanaOnly
 
-def isKanji(char: str) -> bool:
-    """Return True if the given character is a Kanji."""
-    if not char:
-        return False
-    return all('\u4e00' <= c <= '\u9faf' for c in char)
 
 def getKanjiData(kanji_list):
     results = []
 
     for kanji in kanji_list:
-        url = f"https://jisho.org/search/{kanji}%20%23kanji"
+        url = f"https://kanjiapi.dev/v1/kanji/{kanji}"
         res = requests.get(url)
         if res.status_code != 200:
             print(f"Error fetching {kanji}")
             continue
+        data = res.json()
 
-        soup = BeautifulSoup(res.text, "html.parser")
+        jlpt = f"N{data.get('jlpt')}" if data.get("jlpt") else None
+        results.append(
+            {
+                "kanji": kanji,
+                "grade": data.get("grade"),
+                "jlpt": jlpt,
+                "meanings": ", ".join(data.get("meanings", [])),
+                "kunyomi": ", ".join(data.get("kun_readings", [])),
+                "onyomi": ", ".join(data.get("on_readings", [])),
+                "stroke_count": data.get("stroke_count"),
+                "notes": data.get("notes", []),
+                "frequency": data.get("freq_mainichi_shinbun")
 
-        meaning_elem = soup.select_one(".kanji-details__main-meanings")
-        meaning = meaning_elem.text.strip() if meaning_elem else "Meaning not found"
-
-       
-        onyomi = []
-        for a in soup.select("dl.on_yomi dd a"):
-            text = a.get_text(strip=True)
-            if text and not isKanji(text): 
-                onyomi.append(text)
-
-        kunyomi = []
-        for a in soup.select("dl.kun_yomi dd a"):
-            text = a.get_text(strip=True)
-            if text:
-                kunyomi.append(text)
-
-        jlpt_elem = soup.select_one(".jlpt")
-        jlpt = jlpt_elem.text.strip().upper() if jlpt_elem else None
-        if jlpt and jlpt.startswith("JLPT "):
-            jlpt = jlpt.replace("JLPT ", "")
-
-        results.append({
-            "kanji": kanji,
-            "onyomi": onyomi,
-            "kunyomi": kunyomi,
-            "meaning": meaning,
-            "jlpt": jlpt
-        })
+            }
+        )
 
     return results
 
@@ -66,29 +46,24 @@ def getVocabData(vocab_list):
             print(f"No results for {word}")
             continue
 
-        entry = data[0]  
-
+        entry = data[0]
         japanese = entry["japanese"][0]
         senses = entry["senses"]
 
-        
-        meanings = []
-        for s in senses:
-            meanings.extend(s.get("english_definitions"))
-        meanings = meanings[:1]
+        meanings = senses[0].get("english_definitions", [])[:2]
 
-        if isKanaOnly(word):
-            word
-        else:
-            japanese.get("word", word)
+        display_word = word if isKanaOnly(word) else japanese.get("word", word)
+
+        jlpt_raw = (entry.get("jlpt") or [None])[0] 
+        jlpt = jlpt_raw.replace("jlpt-", "").upper() if jlpt_raw else None
 
         results.append({
-            "word": word,
+            "word": display_word,
             "reading": japanese.get("reading", ""),
             "meaning": meanings,
-            "jlpt": (entry.get("jlpt") or [None])[0],
+            "jlpt": jlpt,
             "is_common": entry.get("is_common", False)
         })
 
     return results
-    
+

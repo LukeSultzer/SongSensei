@@ -9,47 +9,53 @@ interface Props {
 export default function LyricsPanel({ lines, selectedId, onSelect }: Props) {
   return (
     <aside
-      className="flex flex-col gap-4 p-6 md:w-1/2 md:overflow-y-auto"
-      style={{ borderBottom: '1px solid var(--border)' }}
+      className="flex flex-col md:w-1/2 md:overflow-y-auto"
+      style={{ borderRight: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}
     >
-      <div className="flex items-baseline gap-2">
-        <h2 className="font-bold text-base" style={{ color: 'var(--espresso)' }}>
-          Original Lyrics
-        </h2>
-        <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
-          (click a line)
-        </span>
-      </div>
+      {lines.map((line, i) => {
+        const isSelected = line.id === selectedId;
+        const num = String(i + 1).padStart(2, '0');
 
-      <div
-        className="rounded-2xl overflow-hidden"
-        style={{ border: '1px solid var(--border)', background: 'var(--card)' }}
-      >
-        {lines.map((line, i) => {
-          const isSelected = line.id === selectedId;
-          return (
-            <button
-              key={line.id}
-              onClick={() => onSelect(line.id)}
-              className="w-full text-left px-5 py-3 transition-colors duration-100"
-              style={{
-                background: isSelected ? 'var(--espresso)' : 'transparent',
-                color: isSelected ? '#fdf8f3' : 'var(--text)',
-                borderBottom: i < lines.length - 1 ? '1px solid var(--border)' : 'none',
-                display: 'block',
-              }}
-              onMouseEnter={(e) => {
-                if (!isSelected) e.currentTarget.style.background = 'var(--card-hover)';
-              }}
-              onMouseLeave={(e) => {
-                if (!isSelected) e.currentTarget.style.background = 'transparent';
-              }}
-            >
-              <span className="text-sm leading-relaxed">{line.japanese}</span>
-            </button>
-          );
-        })}
-      </div>
+        return (
+          <button
+            key={line.id}
+            onClick={() => onSelect(line.id)}
+            className="w-full text-left px-8 py-2 transition-colors duration-100"
+            style={{ background: 'transparent' }}
+          >
+            {/* Line number */}
+            <div className="flex items-center gap-1.5 mb-0.5">
+              {isSelected && (
+                <span className="text-xs" style={{ color: 'var(--accent)' }}>→</span>
+              )}
+              <span
+                className="text-xs font-mono"
+                style={{ color: isSelected ? 'var(--accent)' : 'var(--text-muted)' }}
+              >
+                {num}
+              </span>
+            </div>
+
+            {/* Japanese */}
+            <p className="text-xl leading-snug" style={{ fontWeight: isSelected ? 600 : 400 }}>
+              <span
+                style={{
+                  color: 'var(--text)',
+                  borderBottom: isSelected ? '1px solid var(--text)' : 'none',
+                  paddingBottom: isSelected ? '1px' : '0',
+                }}
+              >
+                {line.japanese}
+              </span>
+            </p>
+
+            {/* English */}
+            <p className="text-sm mt-0.5" style={{ color: 'var(--text-muted)' }}>
+              {line.english}
+            </p>
+          </button>
+        );
+      })}
     </aside>
   );
 }
