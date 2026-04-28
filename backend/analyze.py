@@ -57,7 +57,7 @@ def findVocabKanji(text):
                 lemma = surface
                 skipKanji = True
             else:
-                lemma = word.feature.lemma.split('-')[0]
+                lemma = (word.feature.lemma or surface).split('-')[0]
 
             if lemma in lemmaOverrides and isKanaOnly(surface):
                 lemma = lemmaOverrides[lemma]

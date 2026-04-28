@@ -4,10 +4,9 @@ import JlptBadge from './JlptBadge';
 interface Props {
   entry: VocabEntry;
   index: number;
-  showRomaji: boolean;
 }
 
-export default function VocabRow({ entry, index, showRomaji }: Props) {
+export default function VocabRow({ entry, index }: Props) {
   const num = String(index + 1).padStart(2, '0');
 
   return (
@@ -26,7 +25,7 @@ export default function VocabRow({ entry, index, showRomaji }: Props) {
       </span>
 
       {/* Reading */}
-      {showRomaji && (
+      {entry.reading && (
         <span className="text-sm shrink-0" style={{ color: 'var(--text-muted)' }}>
           {entry.reading}
         </span>

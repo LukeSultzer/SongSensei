@@ -12,13 +12,14 @@ export interface KanjiEntry {
   kunyomi: string[];
   meaning: string;
   jlpt: string | null;
+  strokes?: number;
 }
 
 export interface LyricLine {
   id: number;
   japanese: string;
-  romaji: string;
-  english: string;
+  romaji?: string;
+  english?: string;
   vocab: VocabEntry[];
   kanji: KanjiEntry[];
 }

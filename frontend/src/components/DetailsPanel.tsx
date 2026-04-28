@@ -36,7 +36,7 @@ export default function DetailsPanel({ line, lineIndex, totalLines, showRomaji }
           >
             {line.japanese}
           </h2>
-          {showRomaji && (
+          {showRomaji && line.romaji && (
             <p
               className="text-sm font-mono"
               style={{ color: 'var(--text-muted)' }}
@@ -44,12 +44,14 @@ export default function DetailsPanel({ line, lineIndex, totalLines, showRomaji }
               {line.romaji}
             </p>
           )}
-          <p
-            className="text-base italic mt-1"
-            style={{ color: 'var(--text-secondary)' }}
-          >
-            {line.english}
-          </p>
+          {line.english && (
+            <p
+              className="text-base italic mt-1"
+              style={{ color: 'var(--text-secondary)' }}
+            >
+              {line.english}
+            </p>
+          )}
         </div>
 
         {/* Action buttons */}
@@ -111,7 +113,7 @@ export default function DetailsPanel({ line, lineIndex, totalLines, showRomaji }
         {line.vocab.length > 0 ? (
           <div>
             {line.vocab.map((v, i) => (
-              <VocabRow key={v.word + v.reading} entry={v} index={i} showRomaji={showRomaji} />
+              <VocabRow key={v.word + v.reading} entry={v} index={i} />
             ))}
           </div>
         ) : (
@@ -141,7 +143,7 @@ export default function DetailsPanel({ line, lineIndex, totalLines, showRomaji }
         {line.kanji.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {line.kanji.map((k) => (
-              <KanjiCard key={k.kanji} entry={k} showRomaji={showRomaji} />
+              <KanjiCard key={k.kanji} entry={k} />
             ))}
           </div>
         ) : (
