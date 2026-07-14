@@ -54,60 +54,23 @@ export default function DetailsPanel({ line, lineIndex, totalLines, showRomaji }
           )}
         </div>
 
-        {/* Action buttons */}
-        <div className="flex items-center gap-2">
-          <button
-            className="flex items-center gap-1.5 text-sm font-medium px-4 py-1.5 rounded transition-colors duration-150"
-            style={{ background: 'var(--text)', color: 'var(--bg)' }}
-          >
-            <span>⊡</span> Save line
-          </button>
-          <button
-            className="flex items-center gap-1.5 text-sm px-4 py-1.5 rounded transition-colors duration-150"
-            style={{
-              background: 'transparent',
-              color: 'var(--text-secondary)',
-              border: '1px solid var(--border)',
-            }}
-          >
-            <span>□</span> Note
-          </button>
-          <button
-            className="flex items-center gap-1.5 text-sm px-4 py-1.5 rounded transition-colors duration-150"
-            style={{
-              background: 'transparent',
-              color: 'var(--text-secondary)',
-              border: '1px solid var(--border)',
-            }}
-          >
-            <span>↑</span> Share
-          </button>
-        </div>
       </div>
 
       {/* Vocabulary */}
       <div className="px-8 py-6" style={{ borderBottom: '1px solid var(--border)' }}>
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <span
-              className="text-xs font-semibold uppercase tracking-widest"
-              style={{ color: 'var(--text-muted)' }}
-            >
-              Vocabulary
-            </span>
-            <span
-              className="text-xs font-mono"
-              style={{ color: 'var(--text-muted)' }}
-            >
-              {line.vocab.length}
-            </span>
-          </div>
-          <button
-            className="text-xs"
+        <div className="flex items-center gap-3 mb-4">
+          <span
+            className="text-xs font-semibold uppercase tracking-widest"
             style={{ color: 'var(--text-muted)' }}
           >
-            Add all → Deck
-          </button>
+            Vocabulary
+          </span>
+          <span
+            className="text-xs font-mono"
+            style={{ color: 'var(--text-muted)' }}
+          >
+            {line.vocab.length}
+          </span>
         </div>
 
         {line.vocab.length > 0 ? (

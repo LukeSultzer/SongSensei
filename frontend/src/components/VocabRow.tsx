@@ -38,26 +38,6 @@ export default function VocabRow({ entry, index }: Props) {
       </span>
 
       <JlptBadge level={entry.jlpt} />
-
-      {/* Add button */}
-      <button
-        className="w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 transition-colors duration-150"
-        style={{
-          border: '1px solid var(--border)',
-          color: 'var(--text-muted)',
-          background: 'transparent',
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = 'var(--text-muted)';
-          e.currentTarget.style.color = 'var(--text)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = 'var(--border)';
-          e.currentTarget.style.color = 'var(--text-muted)';
-        }}
-      >
-        +
-      </button>
     </div>
   );
 }

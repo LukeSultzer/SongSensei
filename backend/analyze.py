@@ -5,7 +5,7 @@ tagger = Tagger()
 
 pos = ["名詞", "動詞", "形容詞", "副詞", "代名詞", "形状詞", "連体詞", "感動詞"]
 
-kanaPref = ["ありがとう", "ください", "すみません", "かわいい", "すごい", "おいしい", "うれしい", "きれい", "つまらない", "おもしろい",  "こわい,", "やっぱり", "それ", "これ", "あれ", "いつ", "また", "まで", "ただ"]
+kanaPref = ["ありがとう", "ください", "すみません", "かわいい", "すごい", "おいしい", "うれしい", "きれい", "つまらない", "おもしろい",  "こわい,", "やっぱり", "それ", "この", "これ", "あれ", "いつ", "また", "まで", "ただ"]
 
 blacklisted = ["廃棄"]
 
@@ -30,6 +30,8 @@ def isKanaOnly(text):
     return all('ぁ' <= ch <= 'ん' or 'ァ' <= ch <= 'ヶ' for ch in text)
 
 def isVocab(word):
+    if word.feature.pos1 == "接尾辞" and word.feature.pos2 == "名詞的":
+        return True
     if word.feature.pos1 in pos and word.feature.pos2 != "非自立可能":
         if isBlackListed(word):
             return False
@@ -46,12 +48,15 @@ def findVocabKanji(text):
     kanji = []
     vocab = []
     seen = set()
-    for word in tagger(text):
+    tokens = list(tagger(text))
+    i = 0
+
+    while i < len(tokens):
+        word = tokens[i]
         surface = word.surface
         skipKanji = False
-        
-        if isVocab(word):
 
+        if isVocab(word):
             if not isKanaOnly(surface) and surface in surfaceOverrides:
                 surface = surfaceOverrides.get(surface, surface)
                 lemma = surface
@@ -67,10 +72,8 @@ def findVocabKanji(text):
 
             reading = word.feature.kana or ""
 
-            
             if word.feature.pos1 in ["動詞", "形容詞", "形状詞"]:
-                key = (lemma)
-
+                key = lemma
             else:
                 key = (lemma, reading, surface)
 
@@ -85,4 +88,7 @@ def findVocabKanji(text):
             for char in surface:
                 if '一' <= char <= '龥' and char not in kanji:
                     kanji.append(char)
+
+        i += 1
+
     return kanji, vocab

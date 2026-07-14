@@ -32,6 +32,23 @@ def getKanjiData(kanji_list):
     return results
 
 
+def _best_entry(entries, word):
+    """Pick the entry where word is the primary form, not just an alternate reading."""
+    # Best: word is the first (primary) kana form
+    for entry in entries:
+        if entry.kana_forms and entry.kana_forms[0].text == word:
+            return entry
+    # Good: word matches a kanji form
+    for entry in entries:
+        if any(kf.text == word for kf in entry.kanji_forms):
+            return entry
+    # Fallback: word appears anywhere in kana forms
+    for entry in entries:
+        if any(kf.text == word for kf in entry.kana_forms):
+            return entry
+    return entries[0]
+
+
 def getVocabData(vocab_list):
     if not vocab_list:
         return {}
@@ -41,7 +58,7 @@ def getVocabData(vocab_list):
             lookup = _jam.lookup(word)
             if not lookup.entries:
                 continue
-            entry = lookup.entries[0]
+            entry = _best_entry(lookup.entries, word)
             display_word = word if isKanaOnly(word) else (
                 entry.kanji_forms[0].text if entry.kanji_forms else word
             )
